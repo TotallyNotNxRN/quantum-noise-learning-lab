@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quantum-noise-lab"
+version = "0.1.0"
+description = "Interactive educational simulator for single-qubit decoherence: density matrices, Kraus channels, fidelity, purity, eigenvalues, analytical validation, and a simple repetition-code intuition."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Quantum Noise Learning Lab contributors" }]
+keywords = [
+    "quantum-information",
+    "decoherence",
+    "density-matrix",
+    "kraus-operators",
+    "education",
+    "streamlit",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Education",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy>=1.26,<3",
+    "scipy>=1.11,<2",
+]
+
+[project.optional-dependencies]
+ui = [
+    "streamlit>=1.30,<2",
+    "plotly>=5.18,<7",
+    "matplotlib>=3.8,<4",
+]
+test = [
+    "pytest>=7,<9",
+]
+all = [
+    "streamlit>=1.30,<2",
+    "plotly>=5.18,<7",
+    "matplotlib>=3.8,<4",
+    "pytest>=7,<9",
+]
+
+# Replace this URL with the real upstream URL of the repository before
+# publishing the package or pushing a release tag.
+[project.urls]
+Homepage = "https://github.com/USER/quantum-noise-learning-lab"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["quantum_noise_lab*"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-ra"
+filterwarnings = ["error"]
