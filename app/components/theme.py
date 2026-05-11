@@ -3,13 +3,20 @@
 The toggle lives in the sidebar of every page. The chosen mode is stored in
 ``st.session_state["qnl_theme"]`` and the CSS rendered on every render of
 every page.
+
+CSS is injected into the parent document via a zero-height ``components.v1``
+iframe that runs a tiny script. ``st.markdown(unsafe_allow_html=True)`` and
+``st.html`` both lose the ``<style>`` tag in recent Streamlit versions
+(DOMPurify sanitization); the iframe trick is the supported, robust path.
 """
 
 from __future__ import annotations
 
+import json
 from typing import Literal
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 THEME_STATE_KEY = "qnl_theme"
@@ -55,12 +62,12 @@ def plotly_layout_defaults() -> dict:
     )
 
 
-_BASE_FONT_LINK = (
-    '<link rel="preconnect" href="https://fonts.googleapis.com">'
-    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-    '<link rel="stylesheet" '
-    'href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&'
-    'family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,wght@0,500;0,600;1,500&display=swap">'
+_FONT_HREF = (
+    "https://fonts.googleapis.com/css2"
+    "?family=Inter:wght@400;500;600;700"
+    "&family=JetBrains+Mono:wght@400;500"
+    "&family=Newsreader:ital,wght@0,500;0,600;1,500"
+    "&display=swap"
 )
 
 
@@ -148,8 +155,6 @@ def _css_block(mode: ThemeMode) -> str:
         """
 
     return f"""
-{_BASE_FONT_LINK}
-<style id="qnl-theme-css" data-mode="{mode}">
 :root {{
     {palette}
     --qnl-radius: 14px;
@@ -361,7 +366,6 @@ div[data-testid="stToggle"] label {{
 
 /* Reduce loud emoji presence on h1 -------------------------------- */
 h1 .emoji {{ font-size: 0.8em; opacity: 0.7; margin-right: 0.2em; }}
-</style>
 """
 
 
@@ -369,11 +373,10 @@ def _render_theme_toggle() -> None:
     """Render the light/dark toggle in the sidebar and update session state."""
     current = _current_mode()
     with st.sidebar:
-        st.markdown(
+        st.html(
             '<div style="margin-top:0.6rem;margin-bottom:0.4rem;'
             'font-size:0.78rem;color:var(--qnl-text-dim);letter-spacing:0.06em;'
-            'text-transform:uppercase;">Appearance</div>',
-            unsafe_allow_html=True,
+            'text-transform:uppercase;">Appearance</div>'
         )
         choice = st.radio(
             "Theme",
@@ -389,6 +392,64 @@ def _render_theme_toggle() -> None:
             st.rerun()
 
 
+def _inject_via_iframe(css: str, mode: str) -> None:
+    """Inject CSS into the *parent* document via a zero-height iframe.
+
+    Both ``st.markdown(..., unsafe_allow_html=True)`` and ``st.html`` lose
+    ``<style>`` blocks to DOMPurify in current Streamlit. Running a tiny
+    JS payload inside ``components.v1.html`` lets us reach
+    ``window.parent.document.head`` and append a real ``<style>``.
+    """
+    css_literal = json.dumps(css)
+    href_literal = json.dumps(_FONT_HREF)
+    mode_literal = json.dumps(mode)
+    script = f"""
+<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<script>
+(function () {{
+  try {{
+    var doc = (window.parent && window.parent.document) || document;
+    // Fonts (preconnect + stylesheet) — install once.
+    if (!doc.getElementById('qnl-fonts-preconnect-1')) {{
+      var pc1 = doc.createElement('link');
+      pc1.id = 'qnl-fonts-preconnect-1';
+      pc1.rel = 'preconnect';
+      pc1.href = 'https://fonts.googleapis.com';
+      doc.head.appendChild(pc1);
+      var pc2 = doc.createElement('link');
+      pc2.id = 'qnl-fonts-preconnect-2';
+      pc2.rel = 'preconnect';
+      pc2.href = 'https://fonts.gstatic.com';
+      pc2.setAttribute('crossorigin', '');
+      doc.head.appendChild(pc2);
+    }}
+    if (!doc.getElementById('qnl-fonts-link')) {{
+      var fl = doc.createElement('link');
+      fl.id = 'qnl-fonts-link';
+      fl.rel = 'stylesheet';
+      fl.href = {href_literal};
+      doc.head.appendChild(fl);
+    }}
+    // Replace prior theme style, if any, then install current mode.
+    var old = doc.getElementById('qnl-theme-style');
+    if (old) old.parentNode.removeChild(old);
+    var style = doc.createElement('style');
+    style.id = 'qnl-theme-style';
+    style.setAttribute('data-mode', {mode_literal});
+    style.appendChild(doc.createTextNode({css_literal}));
+    doc.head.appendChild(style);
+  }} catch (err) {{
+    // No-op — Streamlit will still render with its default theme.
+    console && console.warn && console.warn('qnl theme inject failed', err);
+  }}
+}})();
+</script>
+</body></html>
+"""
+    components.html(script, height=0, width=0)
+
+
 def inject_styles() -> None:
     """Inject the active theme CSS + the sidebar theme toggle.
 
@@ -396,5 +457,6 @@ def inject_styles() -> None:
     """
     if THEME_STATE_KEY not in st.session_state:
         st.session_state[THEME_STATE_KEY] = "dark"
-    st.markdown(_css_block(_current_mode()), unsafe_allow_html=True)
+    mode = _current_mode()
+    _inject_via_iframe(_css_block(mode), mode)
     _render_theme_toggle()
