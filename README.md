@@ -133,7 +133,7 @@ Derivations and convention notes live in [`docs/`](docs/).
 Python 3.10+ recommended. From a clean clone:
 
 ```bash
-git clone https://github.com/USER/quantum-noise-learning-lab.git
+git clone https://github.com/TotallyNotNxRN/quantum-noise-learning-lab.git
 cd quantum-noise-learning-lab
 
 # (optional but recommended) create a virtual environment
@@ -149,9 +149,6 @@ pip install -e ".[all]"
 Matplotlib, and pytest. The minimal `pip install -e .` installs only the
 engine (NumPy + SciPy); the commands further down (`pytest`, `streamlit
 run`, the example scripts) require the `[all]` extra.
-
-Replace `USER` in the clone URL above with the actual GitHub owner of your
-fork.
 
 ## Running the app
 

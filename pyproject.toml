@@ -56,7 +56,7 @@ all = [
 # Replace this URL with the real upstream URL of the repository before
 # publishing the package or pushing a release tag.
 [project.urls]
-Homepage = "https://github.com/USER/quantum-noise-learning-lab"
+Homepage = "https://github.com/TotallyNotNxRN/quantum-noise-learning-lab"
 
 [tool.setuptools.packages.find]
 where = ["src"]
