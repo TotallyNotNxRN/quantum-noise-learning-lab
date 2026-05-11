@@ -16,6 +16,7 @@ from app.components.plots import (
     density_matrix_heatmap,
     difference_matrix_heatmap,
 )
+from app.components.bloch import bloch_sphere
 from app.components.theme import inject_styles
 from app.components.validation import validation_pill
 from quantum_noise_lab import (
@@ -183,11 +184,23 @@ with left:
         st.latex(f"E_{idx} = {_latex_2x2(op_array)}")
 
 with right:
-    st.subheader("ρ before noise")
-    st.plotly_chart(density_matrix_heatmap(rho_initial, "Initial ρ"), use_container_width=True)
-    st.subheader("ρ after noise")
-    st.plotly_chart(density_matrix_heatmap(rho_noisy, "Noisy ρ"), use_container_width=True)
-    st.subheader("Difference Δρ = ρ_noisy − ρ")
+    st.subheader("Bloch sphere — before vs after")
+    st.plotly_chart(
+        bloch_sphere(
+            rho_noisy,
+            extra_vectors=[(rho_initial, "ρ initial", "rgba(170, 170, 200, 0.85)")],
+            title="Solid: ρ after channel · dashed: ρ initial",
+        ),
+        use_container_width=True,
+    )
+    matrix_cols = st.columns(2, gap="small")
+    with matrix_cols[0]:
+        st.markdown("**ρ before noise**")
+        st.plotly_chart(density_matrix_heatmap(rho_initial, "Initial ρ"), use_container_width=True)
+    with matrix_cols[1]:
+        st.markdown("**ρ after noise**")
+        st.plotly_chart(density_matrix_heatmap(rho_noisy, "Noisy ρ"), use_container_width=True)
+    st.markdown("**Difference Δρ = ρ_noisy − ρ**")
     st.plotly_chart(difference_matrix_heatmap(diff), use_container_width=True)
     metric_cols = st.columns(2)
     metric_cols[0].metric(

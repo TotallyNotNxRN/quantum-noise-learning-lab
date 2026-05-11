@@ -17,6 +17,7 @@ from app.components.plots import (
     difference_matrix_heatmap,
     overlay_curves,
 )
+from app.components.bloch import bloch_sphere
 from app.components.theme import inject_styles
 from app.components.validation import validation_pill
 from quantum_noise_lab import (
@@ -109,15 +110,25 @@ with top_left:
     st.subheader(f"{channel} — formulas")
     technical_box(formula_text, expanded=True)
     beginner_box(
-        "The boxes on the right show the simulator and the closed-form "
+        "The panels on the right show the simulator and the closed-form "
         "formulas side by side. If everything is implemented correctly, the "
-        "two matrices should be visually identical, the absolute-error "
-        "matrix should be all zeros to within floating-point noise, and the "
-        "blue and orange fidelity curves below should overlap exactly."
+        "two density matrices are visually identical, the absolute-error "
+        "matrix is all zeros to within floating-point noise, and the simulated "
+        "and analytical fidelity curves below overlap exactly."
+    )
+    st.markdown("**Bloch sphere**")
+    st.plotly_chart(
+        bloch_sphere(
+            rho_sim,
+            extra_vectors=[(rho_initial, "ρ_0 (|+⟩)", "rgba(170, 170, 200, 0.8)")],
+            title="Solid: simulated · dashed: |+⟩ initial",
+            height=420,
+        ),
+        use_container_width=True,
     )
 
 with top_right:
-    side_left, side_right = st.columns(2)
+    side_left, side_right = st.columns(2, gap="small")
     with side_left:
         st.markdown("**Simulated ρ**")
         st.plotly_chart(density_matrix_heatmap(rho_sim, "Simulated"), use_container_width=True)

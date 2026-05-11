@@ -5,6 +5,7 @@ from __future__ import annotations
 import numpy as np
 import streamlit as st
 
+from app.components.bloch import bloch_sphere
 from app.components.explain import (
     beginner_box,
     next_module_hint,
@@ -58,7 +59,15 @@ else:
 rho = density_matrix(psi)
 probabilities = np.real(np.array([psi[0] * np.conjugate(psi[0]), psi[1] * np.conjugate(psi[1])]))
 
-left, right = st.columns([1.0, 1.2], gap="large")
+
+def _fmt(z: complex) -> str:
+    if abs(z.imag) < 1e-10:
+        return f"{z.real:+.4f}"
+    return f"{z.real:+.4f} {z.imag:+.4f}j"
+
+
+# Side-by-side: math/explanation on the left, Bloch + density-matrix on the right.
+left, right = st.columns([0.95, 1.15], gap="large")
 
 with left:
     st.subheader("State vector |ψ⟩")
@@ -66,15 +75,10 @@ with left:
         r"|\psi\rangle = \alpha\,|0\rangle + \beta\,|1\rangle, \quad "
         r"\alpha = \cos(\theta/2), \; \beta = e^{i\varphi}\sin(\theta/2)"
     )
-    def _fmt(z: complex) -> str:
-        if abs(z.imag) < 1e-10:
-            return f"{z.real:+.4f}"
-        return f"{z.real:+.4f} {z.imag:+.4f}j"
+    st.code(f"α = {_fmt(psi[0])}\nβ = {_fmt(psi[1])}", language="text")
 
-    st.code(
-        f"α = {_fmt(psi[0])}\nβ = {_fmt(psi[1])}",
-        language="text",
-    )
+    st.subheader("Measurement probabilities")
+    st.plotly_chart(probability_bar(probabilities, ["|0⟩", "|1⟩"]), use_container_width=True)
 
     beginner_box(
         """
@@ -84,7 +88,6 @@ with left:
         because the qubit has to come out as *something*.
         """
     )
-
     technical_box(
         r"""
 For a pure state $|\psi\rangle$ the density matrix is the outer product:
@@ -103,37 +106,40 @@ information that noise will destroy first.
     )
 
 with right:
+    st.subheader("Bloch sphere")
+    st.plotly_chart(bloch_sphere(rho), use_container_width=True)
+    st.caption(
+        "The orange vector is the Bloch vector r = (Tr ρX, Tr ρY, Tr ρZ). "
+        "Pure states sit on the surface; mixed states retract toward the centre."
+    )
     st.subheader("Density matrix ρ")
     st.plotly_chart(density_matrix_heatmap(rho), use_container_width=True)
     if np.max(np.abs(np.imag(rho))) > 1e-8:
         st.plotly_chart(imag_part_heatmap(rho), use_container_width=True)
-    st.subheader("Measurement probabilities")
-    st.plotly_chart(
-        probability_bar(probabilities, ["|0⟩", "|1⟩"]),
-        use_container_width=True,
+
+st.divider()
+
+bridge_left, bridge_right = st.columns([1, 1], gap="large")
+with bridge_left:
+    st.subheader("Why density matrices?")
+    st.markdown(
+        """
+        A *pure* state can be written as a single ket |ψ⟩. The instant noise
+        enters the picture, the system is no longer in one definite state — it
+        is a *statistical mixture* of possible outcomes. There is no ket that
+        represents "70 % |0⟩ and 30 % |1⟩"; you need a density matrix ρ for that.
+
+        From the next module on, every state is a density matrix. The noise
+        channels in Noise Lab act on ρ directly — they cannot act on |ψ⟩,
+        because after noise there is no |ψ⟩ to act on.
+        """
     )
-
-st.divider()
-st.subheader("Why density matrices? (bridge to Noise Lab)")
-st.markdown(
-    """
-    A *pure* state can be written as a single ket |ψ⟩. The instant noise enters
-    the picture, the system is no longer in one definite state — it is a
-    *statistical mixture* of possible outcomes. There is no ket that
-    represents "70 % |0⟩ and 30 % |1⟩"; you need a density matrix ρ for that.
-
-    From the next module on, every state is a density matrix. The noise
-    channels in Noise Lab act on ρ directly — they cannot act on |ψ⟩, because
-    after noise there is no |ψ⟩ to act on.
-    """
-)
-
-st.divider()
-st.subheader("Validation")
-st.caption(
-    "Hover any pill to see the active tolerance and the measured deviation."
-)
-validation_pill(rho)
+with bridge_right:
+    st.subheader("Validation")
+    st.caption(
+        "Hover any pill to see the active tolerance and the measured deviation."
+    )
+    validation_pill(rho)
 
 next_module_hint(
     "Noise Lab",

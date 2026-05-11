@@ -17,19 +17,19 @@ def page_footer() -> None:
 
 def beginner_box(content: str, *, expanded: bool = True) -> None:
     """Plain-language explanation collapsible block."""
-    with st.expander("📘 Beginner explanation", expanded=expanded):
+    with st.expander("Beginner explanation", expanded=expanded):
         st.markdown(content)
 
 
 def technical_box(content: str, *, expanded: bool = False) -> None:
     """Equation-heavy explanation collapsible block."""
-    with st.expander("🧪 Technical explanation", expanded=expanded):
+    with st.expander("Technical explanation", expanded=expanded):
         st.markdown(content)
 
 
 def convention_callout(text: str) -> None:
-    """Yellow callout used to pin the project's chosen mathematical convention."""
-    st.warning(text, icon="ℹ️")
+    """Inline callout that pins the project's chosen mathematical convention."""
+    st.info(text, icon=None)
 
 
 def next_module_hint(
