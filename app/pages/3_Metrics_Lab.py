@@ -16,6 +16,7 @@ from app.components.plots import (
     eigenvalue_bar,
     metric_curve,
 )
+from app.components.theme import inject_styles
 from app.components.validation import validation_pill
 from quantum_noise_lab import (
     amplitude_damping_kraus,
@@ -34,6 +35,7 @@ from quantum_noise_lab import (
 )
 
 st.set_page_config(page_title="Metrics Lab", page_icon="📊", layout="wide")
+inject_styles()
 st.title("Metrics Lab — Fidelity, Purity, Eigenvalues")
 
 st.markdown(
@@ -112,14 +114,16 @@ with top_left:
     )
     technical_box(
         r"""
-        Squared Uhlmann fidelity:
-        \[
-        F(\rho, \sigma) = \left( \operatorname{Tr}\sqrt{\sqrt{\rho}\,\sigma\,\sqrt{\rho}} \right)^2.
-        \]
-        For pure reference \(\sigma = |\psi\rangle\langle\psi|\):
-        \( F = \langle\psi|\rho|\psi\rangle.\)
-        Purity: \(\operatorname{Tr}(\rho^2)\), bounded between \(1/d\) and 1.
-        """
+Squared Uhlmann fidelity:
+
+$$
+F(\rho, \sigma) = \left( \operatorname{Tr}\sqrt{\sqrt{\rho}\,\sigma\,\sqrt{\rho}} \right)^2.
+$$
+
+For pure reference $\sigma = |\psi\rangle\langle\psi|$:
+$F = \langle\psi|\rho|\psi\rangle$.
+Purity: $\operatorname{Tr}(\rho^2)$, bounded between $1/d$ and 1.
+"""
     )
 
 with top_right:

@@ -16,6 +16,7 @@ from app.components.plots import (
     density_matrix_heatmap,
     difference_matrix_heatmap,
 )
+from app.components.theme import inject_styles
 from app.components.validation import validation_pill
 from quantum_noise_lab import (
     amplitude_damping_kraus,
@@ -31,6 +32,7 @@ from quantum_noise_lab import (
 )
 
 st.set_page_config(page_title="Noise Lab", page_icon="🌫️", layout="wide")
+inject_styles()
 st.title("Noise Lab — Kraus Channels and Decoherence")
 
 st.markdown(
@@ -76,15 +78,15 @@ if channel_name == "Amplitude damping":
         "battery discharging. γ is the probability that this decay happens."
     )
     channel_intro_technical = r"""
-    \[
-    E_0 = \begin{pmatrix}1 & 0 \\ 0 & \sqrt{1-\gamma}\end{pmatrix},
-    \qquad
-    E_1 = \begin{pmatrix}0 & \sqrt{\gamma} \\ 0 & 0\end{pmatrix}.
-    \]
-    The map \(\mathcal{E}(\rho) = E_0 \rho E_0^\dagger + E_1 \rho E_1^\dagger\)
-    shrinks the |1⟩ population by \(\gamma\) and the off-diagonals by
-    \(\sqrt{1-\gamma}\).
-    """
+$$
+E_0 = \begin{pmatrix}1 & 0 \\ 0 & \sqrt{1-\gamma}\end{pmatrix},
+\qquad
+E_1 = \begin{pmatrix}0 & \sqrt{\gamma} \\ 0 & 0\end{pmatrix}.
+$$
+
+The map $\mathcal{E}(\rho) = E_0 \rho E_0^\dagger + E_1 \rho E_1^\dagger$
+shrinks the |1⟩ population by $\gamma$ and the off-diagonals by $\sqrt{1-\gamma}$.
+"""
 elif channel_name == "Phase damping":
     kraus_label = "λ"
     kraus_ops = phase_damping_kraus(param)
@@ -98,15 +100,17 @@ elif channel_name == "Phase damping":
         "but the coherence (off-diagonal entries of ρ) gets washed out."
     )
     channel_intro_technical = r"""
-    Random-Z form:
-    \[
-    E_0 = \sqrt{1-\lambda/2}\;I,\qquad
-    E_1 = \sqrt{\lambda/2}\;Z.
-    \]
-    This scales the off-diagonals of \(\rho\) by exactly \((1-\lambda)\) and
-    leaves diagonals untouched. *Convention note:* some textbooks parameterize
-    phase damping so off-diagonals decay by \(\sqrt{1-\lambda}\) instead.
-    """
+Random-Z form:
+
+$$
+E_0 = \sqrt{1-\lambda/2}\;I,\qquad
+E_1 = \sqrt{\lambda/2}\;Z.
+$$
+
+This scales the off-diagonals of $\rho$ by exactly $(1-\lambda)$ and
+leaves diagonals untouched. *Convention note:* some textbooks parameterize
+phase damping so off-diagonals decay by $\sqrt{1-\lambda}$ instead.
+"""
 else:
     kraus_label = "p"
     kraus_ops = depolarizing_kraus(param)
@@ -120,13 +124,13 @@ else:
         "and with probability 1−p it is left alone."
     )
     channel_intro_technical = r"""
-    \[
-    \mathcal{D}(\rho) = (1-p)\,\rho + p\,\tfrac{I}{2},\qquad
-    E_0 = \sqrt{1-3p/4}\,I,\;
-    E_1=\sqrt{p/4}\,X,\;
-    E_2=\sqrt{p/4}\,Y,\;
-    E_3=\sqrt{p/4}\,Z.
-    \]
+$$
+\mathcal{D}(\rho) = (1-p)\,\rho + p\,\tfrac{I}{2},\qquad
+E_0 = \sqrt{1-3p/4}\,I,\;
+E_1=\sqrt{p/4}\,X,\;
+E_2=\sqrt{p/4}\,Y,\;
+E_3=\sqrt{p/4}\,Z.
+$$
     """
 
 rho_initial = density_matrix(psi)

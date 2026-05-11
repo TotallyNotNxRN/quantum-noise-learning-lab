@@ -12,12 +12,14 @@ from app.components.explain import (
     page_footer,
     technical_box,
 )
+from app.components.theme import inject_styles, plotly_layout_defaults
 from quantum_noise_lab import (
     repetition_success_protected,
     repetition_success_unprotected,
 )
 
 st.set_page_config(page_title="Protection Lab", page_icon="🛡️", layout="wide")
+inject_styles()
 st.title("Protection Lab — Simple Error-Correction Intuition")
 
 st.markdown(
@@ -82,14 +84,15 @@ with left:
     )
     technical_box(
         r"""
-        \[
-        P_{unprot}(p) = 1 - p, \qquad
-        P_{prot}(p) = (1-p)^3 + 3p(1-p)^2.
-        \]
-        Below \(p = 1/2\), \(P_{prot} > P_{unprot}\): redundancy helps.
-        Above \(p = 1/2\), the noise is so heavy that majority vote is
-        actively worse than not encoding at all.
-        """
+$$
+P_{unprot}(p) = 1 - p, \qquad
+P_{prot}(p) = (1-p)^3 + 3p(1-p)^2.
+$$
+
+Below $p = 1/2$, $P_{prot} > P_{unprot}$: redundancy helps.
+Above $p = 1/2$, the noise is so heavy that majority vote is
+actively worse than not encoding at all.
+"""
     )
 
 with right:
@@ -97,20 +100,20 @@ with right:
     fig.add_trace(
         go.Scatter(
             x=grid, y=unprot_curve, mode="lines", name="Unprotected (1 − p)",
-            line=dict(color="#3b5bdb", width=2),
+            line=dict(color="#7aa2ff", width=2),
         )
     )
     fig.add_trace(
         go.Scatter(
             x=grid, y=prot_curve, mode="lines", name="3-rep majority vote",
-            line=dict(color="#2f9e44", width=2),
+            line=dict(color="#51cf66", width=2),
         )
     )
     fig.add_trace(
         go.Scatter(
             x=[p_current], y=[unprot_now],
             mode="markers", name="current (unprot.)",
-            marker=dict(color="#3b5bdb", size=11, symbol="circle"),
+            marker=dict(color="#7aa2ff", size=11, symbol="circle"),
             showlegend=False,
         )
     )
@@ -118,7 +121,7 @@ with right:
         go.Scatter(
             x=[p_current], y=[prot_now],
             mode="markers", name="current (prot.)",
-            marker=dict(color="#2f9e44", size=11, symbol="circle"),
+            marker=dict(color="#51cf66", size=11, symbol="circle"),
             showlegend=False,
         )
     )
@@ -128,10 +131,11 @@ with right:
         title="Success probability vs bit-flip rate",
         xaxis_title="Per-bit flip probability p",
         yaxis_title="P(success)",
-        yaxis=dict(range=[0.0, 1.05]),
         height=420,
         legend=dict(orientation="h", yanchor="bottom", y=1.0, xanchor="right", x=1.0),
+        **plotly_layout_defaults(),
     )
+    fig.update_yaxes(range=[0.0, 1.05])
     st.plotly_chart(fig, use_container_width=True)
 
 st.divider()

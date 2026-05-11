@@ -1,11 +1,11 @@
 [theme]
-base = "light"
-primaryColor = "#3b5bdb"
-backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#eef1f7"
-textColor = "#1f2733"
+base = "dark"
+primaryColor = "#7aa2ff"
+backgroundColor = "#0b0e14"
+secondaryBackgroundColor = "#141a26"
+textColor = "#e8eaef"
 font = "serif"
-linkColor = "#274bb5"
+linkColor = "#9ab8ff"
 
 [server]
 headless = false

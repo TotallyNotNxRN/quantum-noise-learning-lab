@@ -17,6 +17,7 @@ from app.components.plots import (
     difference_matrix_heatmap,
     overlay_curves,
 )
+from app.components.theme import inject_styles
 from app.components.validation import validation_pill
 from quantum_noise_lab import (
     amplitude_damping_kraus,
@@ -33,6 +34,7 @@ from quantum_noise_lab import (
 )
 
 st.set_page_config(page_title="Validation Lab", page_icon="✅", layout="wide")
+inject_styles()
 st.title("Validation Lab — Analytical vs Simulated Decoherence")
 
 st.markdown(
@@ -66,28 +68,28 @@ if channel == "Amplitude damping":
     analytical_fid_fn = analytical_amplitude_fidelity
     param_label = "γ"
     formula_text = r"""
-    \[
-    \rho_{AD}(\gamma) = \begin{pmatrix}
-    (1+\gamma)/2 & \sqrt{1-\gamma}/2 \\
-    \sqrt{1-\gamma}/2 & (1-\gamma)/2
-    \end{pmatrix},\quad
-    F_{AD}(\gamma) = \frac{1+\sqrt{1-\gamma}}{2}.
-    \]
-    """
+$$
+\rho_{AD}(\gamma) = \begin{pmatrix}
+(1+\gamma)/2 & \sqrt{1-\gamma}/2 \\
+\sqrt{1-\gamma}/2 & (1-\gamma)/2
+\end{pmatrix},\quad
+F_{AD}(\gamma) = \frac{1+\sqrt{1-\gamma}}{2}.
+$$
+"""
 else:
     kraus_fn = phase_damping_kraus
     analytical_rho_fn = analytical_phase_density
     analytical_fid_fn = analytical_phase_fidelity
     param_label = "λ"
     formula_text = r"""
-    \[
-    \rho_{PD}(\lambda) = \begin{pmatrix}
-    1/2 & (1-\lambda)/2 \\
-    (1-\lambda)/2 & 1/2
-    \end{pmatrix},\quad
-    F_{PD}(\lambda) = 1 - \lambda/2.
-    \]
-    """
+$$
+\rho_{PD}(\lambda) = \begin{pmatrix}
+1/2 & (1-\lambda)/2 \\
+(1-\lambda)/2 & 1/2
+\end{pmatrix},\quad
+F_{PD}(\lambda) = 1 - \lambda/2.
+$$
+"""
 
 # ---- engine -------------------------------------------------------------
 

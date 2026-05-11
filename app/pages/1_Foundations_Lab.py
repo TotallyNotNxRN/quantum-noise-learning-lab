@@ -16,6 +16,7 @@ from app.components.plots import (
     imag_part_heatmap,
     probability_bar,
 )
+from app.components.theme import inject_styles
 from app.components.validation import validation_pill
 from quantum_noise_lab import (
     custom_qubit_state,
@@ -26,6 +27,7 @@ from quantum_noise_lab import (
 )
 
 st.set_page_config(page_title="Foundations Lab", page_icon="🧱", layout="wide")
+inject_styles()
 st.title("Foundations Lab — State Vectors and Density Matrices")
 
 st.markdown(
@@ -85,20 +87,19 @@ with left:
 
     technical_box(
         r"""
-        For a pure state \(|\psi\rangle\) the density matrix is the outer
-        product
+For a pure state $|\psi\rangle$ the density matrix is the outer product:
 
-        $$
-        \rho = |\psi\rangle\langle\psi| = \begin{pmatrix}
-        |\alpha|^2 & \alpha\beta^* \\
-        \alpha^*\beta & |\beta|^2
-        \end{pmatrix}.
-        $$
+$$
+\rho = |\psi\rangle\langle\psi| = \begin{pmatrix}
+|\alpha|^2 & \alpha\beta^* \\
+\alpha^*\beta & |\beta|^2
+\end{pmatrix}.
+$$
 
-        Diagonal entries are populations (measurement probabilities) and
-        off-diagonal entries are *coherences* — the quantum phase
-        information that noise will destroy first.
-        """
+Diagonal entries are populations (measurement probabilities) and
+off-diagonal entries are *coherences* — the quantum phase
+information that noise will destroy first.
+"""
     )
 
 with right:
