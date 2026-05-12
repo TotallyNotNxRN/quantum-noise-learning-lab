@@ -112,12 +112,14 @@ function Scene({ rho, ghost }: { rho: Mat; ghost: Mat | null }) {
 
       {/* Labels — drei <Text> renders crisp SDF text in world space and is
           billboarded via <Billboard>. */}
-      <AxisLabel position={[0, 0, 1.22]} text="|0⟩" color={palette.label} size={0.13} />
-      <AxisLabel position={[0, 0, -1.22]} text="|1⟩" color={palette.label} size={0.13} />
-      <AxisLabel position={[1.22, 0, 0]} text="+x" color={palette.label} size={0.1} />
-      <AxisLabel position={[-1.22, 0, 0]} text="−x" color={palette.label} size={0.1} />
-      <AxisLabel position={[0, 1.22, 0]} text="+y" color={palette.label} size={0.1} />
-      <AxisLabel position={[0, -1.22, 0]} text="−y" color={palette.label} size={0.1} />
+      {/* Six cardinal states on the Bloch sphere — labeled with their kets
+          instead of axis names. */}
+      <AxisLabel position={[0, 0, 1.24]} text="|0⟩" color={palette.label} size={0.14} />
+      <AxisLabel position={[0, 0, -1.24]} text="|1⟩" color={palette.label} size={0.14} />
+      <AxisLabel position={[1.28, 0, 0]} text="|+⟩" color={palette.label} size={0.12} />
+      <AxisLabel position={[-1.28, 0, 0]} text="|−⟩" color={palette.label} size={0.12} />
+      <AxisLabel position={[0, 1.28, 0]} text="|+i⟩" color={palette.label} size={0.12} />
+      <AxisLabel position={[0, -1.28, 0]} text="|−i⟩" color={palette.label} size={0.12} />
 
       {/* Ghost reference vector (e.g. ρ_initial in Noise / Validation). */}
       {ghostTip && (

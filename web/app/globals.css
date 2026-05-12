@@ -3,195 +3,208 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ---------- Custom cursor (no trail; static dot + ring) ---------- */
+/* ============================================================
+ * Theme tokens — registered as <color> so that the swap from
+ * dark to light animates smoothly across every var-driven
+ * surface (Chrome 85+, Safari 16.4+, Firefox 128+).
+ * ============================================================ */
 
-:root {
-  --qnl-cursor-dark: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><circle cx='14' cy='14' r='10' fill='none' stroke='rgba(122,162,255,0.55)' stroke-width='1.4'/><circle cx='14' cy='14' r='2.6' fill='%237aa2ff'/></svg>") 14 14, crosshair;
-  --qnl-cursor-light: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><circle cx='14' cy='14' r='10' fill='none' stroke='rgba(46,72,170,0.6)' stroke-width='1.4'/><circle cx='14' cy='14' r='2.6' fill='%232e48aa'/></svg>") 14 14, crosshair;
-}
-
-/* ---------- Theme tokens ---------- */
-
-:root {
-  color-scheme: dark;
-}
+@property --bg { syntax: "<color>"; inherits: true; initial-value: #050505; }
+@property --bg-deep { syntax: "<color>"; inherits: true; initial-value: #000000; }
+@property --panel { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, 0.045); }
+@property --panel-strong { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, 0.07); }
+@property --panel-border { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, 0.10); }
+@property --text { syntax: "<color>"; inherits: true; initial-value: #f5f5f4; }
+@property --text-dim { syntax: "<color>"; inherits: true; initial-value: #a8a29e; }
+@property --text-accent { syntax: "<color>"; inherits: true; initial-value: #fbbf24; }
+@property --accent { syntax: "<color>"; inherits: true; initial-value: #fbbf24; }
+@property --accent-2 { syntax: "<color>"; inherits: true; initial-value: #fb923c; }
+@property --good { syntax: "<color>"; inherits: true; initial-value: #a3e635; }
+@property --warn { syntax: "<color>"; inherits: true; initial-value: #fbbf24; }
+@property --bad { syntax: "<color>"; inherits: true; initial-value: #f87171; }
+@property --plot-bg { syntax: "<color>"; inherits: true; initial-value: rgba(0, 0, 0, 0.35); }
+@property --plot-grid { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, 0.06); }
+@property --plot-line { syntax: "<color>"; inherits: true; initial-value: #fbbf24; }
+@property --plot-line-2 { syntax: "<color>"; inherits: true; initial-value: #fb923c; }
+@property --heatmap-pos { syntax: "<color>"; inherits: true; initial-value: #fbbf24; }
+@property --heatmap-neg { syntax: "<color>"; inherits: true; initial-value: #f87171; }
+@property --heatmap-mid { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, 0.04); }
+@property --bloch-sphere { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, 0.25); }
+@property --bloch-equator { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, 0.55); }
+@property --bloch-vector { syntax: "<color>"; inherits: true; initial-value: #fbbf24; }
+@property --bloch-axis { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, 0.45); }
+@property --bg-point { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, 0.45); }
+@property --bg-point-fade { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, 0.0); }
 
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --bg: #050608;
+  --bg: #050505;
   --bg-deep: #000000;
-  --panel: rgba(28, 36, 56, 0.72);
-  --panel-strong: rgba(34, 44, 68, 0.92);
-  --panel-border: rgba(122, 162, 255, 0.28);
+  --panel: rgba(255, 255, 255, 0.045);
+  --panel-strong: rgba(255, 255, 255, 0.075);
+  --panel-border: rgba(255, 255, 255, 0.10);
 
-  --text: #e9ecf2;
-  --text-dim: #98a0b3;
-  --text-accent: #cbd6f0;
+  --text: #f5f5f4;
+  --text-dim: #a8a29e;
+  --text-accent: #fbbf24;
 
-  --accent: #7aa2ff;
-  --accent-2: #9ab8ff;
-  --good: #51cf66;
-  --warn: #ffd43b;
-  --bad: #ff6b6b;
+  --accent: #fbbf24;
+  --accent-2: #fb923c;
+  --good: #a3e635;
+  --warn: #fbbf24;
+  --bad: #f87171;
 
-  --plot-bg: #0a0e16;
+  --plot-bg: rgba(0, 0, 0, 0.35);
   --plot-grid: rgba(255, 255, 255, 0.06);
-  --plot-line: #7aa2ff;
-  --plot-line-2: #ff9d4d;
+  --plot-line: #fbbf24;
+  --plot-line-2: #fb923c;
+  --heatmap-pos: #fbbf24;
+  --heatmap-neg: #f87171;
+  --heatmap-mid: rgba(255, 255, 255, 0.04);
 
-  --heatmap-pos: #5b8def;
-  --heatmap-neg: #f08080;
-  --heatmap-mid: #1a1f2c;
+  --bloch-sphere: rgba(255, 255, 255, 0.25);
+  --bloch-equator: rgba(255, 255, 255, 0.55);
+  --bloch-vector: #fbbf24;
+  --bloch-axis: rgba(255, 255, 255, 0.45);
 
-  --bloch-sphere: rgba(122, 162, 255, 0.18);
-  --bloch-equator: rgba(150, 170, 220, 0.55);
-  --bloch-vector: #ff9d4d;
-  --bloch-axis: rgba(220, 220, 220, 0.55);
+  --bg-point: rgba(255, 255, 255, 0.45);
+  --bg-point-fade: rgba(255, 255, 255, 0.0);
 
   --shadow-1: 0 10px 30px rgba(0, 0, 0, 0.45);
   --shadow-2: 0 22px 60px rgba(0, 0, 0, 0.55);
-
-  --bg-point: rgba(180, 200, 255, 0.55);
-  --bg-point-fade: rgba(120, 160, 220, 0.08);
-  --qnl-cursor: var(--qnl-cursor-dark);
 }
 
 [data-theme="light"] {
   color-scheme: light;
 
-  --bg: #f6f8fc;
-  --bg-deep: #ecf0f8;
-  --panel: rgba(255, 255, 255, 0.92);
-  --panel-strong: rgba(255, 255, 255, 0.98);
-  --panel-border: rgba(36, 56, 110, 0.16);
+  --bg: #fafaf9;
+  --bg-deep: #f5f5f4;
+  --panel: rgba(255, 255, 255, 0.6);
+  --panel-strong: rgba(255, 255, 255, 0.9);
+  --panel-border: rgba(28, 25, 23, 0.10);
 
-  --text: #1a1f2c;
-  --text-dim: #555c6e;
-  --text-accent: #2e48aa;
+  --text: #1c1917;
+  --text-dim: #57534e;
+  --text-accent: #b45309;
 
-  --accent: #2e48aa;
-  --accent-2: #6a8bff;
-  --good: #2f9e44;
-  --warn: #f08c00;
-  --bad: #c92a2a;
+  --accent: #b45309;
+  --accent-2: #c2410c;
+  --good: #4d7c0f;
+  --warn: #b45309;
+  --bad: #b91c1c;
 
-  --plot-bg: #ffffff;
-  --plot-grid: rgba(0, 0, 0, 0.07);
-  --plot-line: #2e48aa;
-  --plot-line-2: #d96d3a;
+  --plot-bg: rgba(255, 255, 255, 0.7);
+  --plot-grid: rgba(28, 25, 23, 0.06);
+  --plot-line: #b45309;
+  --plot-line-2: #c2410c;
+  --heatmap-pos: #b45309;
+  --heatmap-neg: #b91c1c;
+  --heatmap-mid: rgba(255, 255, 255, 0.6);
 
-  --heatmap-pos: #3b5bdb;
-  --heatmap-neg: #d9534f;
-  --heatmap-mid: #ffffff;
+  --bloch-sphere: rgba(28, 25, 23, 0.20);
+  --bloch-equator: rgba(28, 25, 23, 0.55);
+  --bloch-vector: #b45309;
+  --bloch-axis: rgba(28, 25, 23, 0.45);
 
-  --bloch-sphere: rgba(46, 72, 170, 0.10);
-  --bloch-equator: rgba(46, 72, 170, 0.45);
-  --bloch-vector: #d96d3a;
-  --bloch-axis: rgba(50, 60, 90, 0.55);
+  --bg-point: rgba(28, 25, 23, 0.40);
+  --bg-point-fade: rgba(28, 25, 23, 0.0);
 
-  --shadow-1: 0 8px 20px rgba(15, 30, 80, 0.08);
-  --shadow-2: 0 18px 45px rgba(15, 30, 80, 0.12);
-
-  --bg-point: rgba(60, 90, 180, 0.55);
-  --bg-point-fade: rgba(60, 90, 180, 0.05);
-  --qnl-cursor: var(--qnl-cursor-light);
+  --shadow-1: 0 8px 20px rgba(15, 23, 42, 0.08);
+  --shadow-2: 0 18px 45px rgba(15, 23, 42, 0.12);
 }
 
-/* ---------- Base ---------- */
-
-* {
-  transition: background-color 360ms ease, color 360ms ease,
-    border-color 360ms ease, box-shadow 360ms ease, fill 360ms ease,
-    stroke 360ms ease;
+/* Animate every theme-driven surface 400 ms when the data-theme attribute
+   flips. Requires the @property registrations above. */
+:root {
+  transition:
+    --bg 400ms ease,
+    --bg-deep 400ms ease,
+    --panel 400ms ease,
+    --panel-strong 400ms ease,
+    --panel-border 400ms ease,
+    --text 400ms ease,
+    --text-dim 400ms ease,
+    --text-accent 400ms ease,
+    --accent 400ms ease,
+    --accent-2 400ms ease,
+    --plot-bg 400ms ease,
+    --plot-grid 400ms ease,
+    --plot-line 400ms ease,
+    --plot-line-2 400ms ease,
+    --heatmap-pos 400ms ease,
+    --heatmap-neg 400ms ease,
+    --heatmap-mid 400ms ease,
+    --bloch-sphere 400ms ease,
+    --bloch-equator 400ms ease,
+    --bloch-vector 400ms ease,
+    --bloch-axis 400ms ease,
+    --bg-point 400ms ease;
 }
 
-html,
-body {
-  background: var(--bg);
+/* ============================================================
+ * Base
+ * ============================================================ */
+
+html, body {
+  background: transparent;
   color: var(--text);
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+  font-family: var(--font-inter, "Inter"), system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  cursor: var(--qnl-cursor);
 }
-
+html { background: var(--bg-deep); }
 body {
   min-height: 100dvh;
   overflow-x: hidden;
+  cursor: none;
+}
+@media (pointer: coarse) {
+  body { cursor: auto; }
 }
 
-a, button, [role="button"], input, [data-baseweb="slider"] [role="slider"] {
-  cursor: var(--qnl-cursor);
-}
-input[type="range"] {
-  cursor: ew-resize;
-}
-
-h1,
-h2,
-h3,
-h4 {
-  font-family: "Newsreader", Georgia, serif;
+h1, h2, h3, h4 {
+  font-family: var(--font-newsreader, "Newsreader"), Georgia, serif;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.012em;
 }
-
-code,
-pre,
-.mono {
-  font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+code, pre, .mono {
+  font-family: var(--font-jetbrains, "JetBrains Mono"), ui-monospace, Menlo, monospace;
 }
+a { color: var(--accent); }
+::selection { background: var(--accent); color: #050505; }
 
-a {
-  color: var(--accent);
-}
-
-::selection {
-  background: var(--accent);
-  color: #fff;
-}
-
-/* ---------- Reduced motion ----------
- * Keep theme color/border transitions and the entrance opacity fade because
- * they convey state changes. Only kill heavy motion (page slides, layout
- * shifts, infinite loops). */
+/* ============================================================
+ * Reduced motion — only kill unbounded loops, keep state-change
+ * transitions so theme swap stays smooth.
+ * ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
   }
-  .qnl-no-reduce-motion {
-    /* opt-out marker for elements that MUST keep their animation */
-  }
 }
 
-/* ---------- Scrollbar ---------- */
+/* ============================================================
+ * Scrollbar
+ * ============================================================ */
 
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--panel-border);
-  border-radius: 5px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
-}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-/* ---------- Slider ---------- */
+/* ============================================================
+ * Sliders
+ * ============================================================ */
 
 .qnl-slider,
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 6px;
+  height: 4px;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
   outline: none;
@@ -203,50 +216,61 @@ input[type="range"]::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: var(--panel-strong);
+  background: var(--bg);
   border: 2px solid var(--accent);
-  cursor: ew-resize;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  transition: transform 160ms ease;
+  cursor: none;
+  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.10);
+  transition: transform 160ms ease, box-shadow 200ms ease;
 }
 .qnl-slider::-webkit-slider-thumb:hover,
 input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.12);
+  transform: scale(1.18);
+  box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.18);
 }
 .qnl-slider::-moz-range-thumb,
 input[type="range"]::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: var(--panel-strong);
+  background: var(--bg);
   border: 2px solid var(--accent);
-  cursor: ew-resize;
+  cursor: none;
 }
 
-/* ---------- Plot container override (let Plotly/recharts respect the box) ---------- */
+/* ============================================================
+ * Plot container — keep the OS crosshair so box-zoom still feels
+ * obvious, even with the custom cursor hidden on body.
+ * ============================================================ */
 
 .qnl-plot-host {
   width: 100%;
   overflow: hidden;
   cursor: crosshair;
 }
-.qnl-plot-host:hover {
-  cursor: crosshair;
-}
 
-/* ---------- Glass-panel polish ---------- */
+/* ============================================================
+ * Glass panel substrate
+ * ============================================================ */
 
-[data-theme="dark"] .rounded-glass {
-  background-image: linear-gradient(
-    135deg,
-    rgba(122, 162, 255, 0.06) 0%,
-    rgba(20, 26, 38, 0) 60%
-  );
+.rounded-glass {
+  position: relative;
+  isolation: isolate;
 }
-[data-theme="light"] .rounded-glass {
-  background-image: linear-gradient(
+.rounded-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
     135deg,
-    rgba(46, 72, 170, 0.05) 0%,
-    rgba(255, 255, 255, 0) 60%
+    color-mix(in srgb, var(--accent) 8%, transparent) 0%,
+    transparent 55%
   );
+  opacity: 0.55;
+  z-index: 0;
+}
+.rounded-glass > * {
+  position: relative;
+  z-index: 1;
 }

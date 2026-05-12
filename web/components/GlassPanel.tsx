@@ -62,11 +62,16 @@ export function GlassPanel({ children, className, tilt = true, glow = false }: G
         rotateX: yDeg,
         rotateY: xDeg,
         z: zPx,
+        background: "var(--panel)",
+        borderColor: "var(--panel-border)",
+        backdropFilter: "blur(22px) saturate(160%)",
+        WebkitBackdropFilter: "blur(22px) saturate(160%)",
+        boxShadow:
+          "var(--shadow-1), inset 0 1px 0 color-mix(in srgb, var(--text) 6%, transparent)",
       }}
       className={[
-        "relative rounded-glass border border-panel-border bg-panel",
-        "backdrop-blur-md shadow-glass",
-        glow ? "ring-1 ring-accent/15" : "",
+        "relative rounded-glass border",
+        glow ? "ring-1" : "",
         className ?? "",
       ].join(" ")}
     >
