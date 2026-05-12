@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quantum-noise-lab"
-version = "0.1.0"
-description = "Interactive educational simulator for single-qubit decoherence: density matrices, Kraus channels, fidelity, purity, eigenvalues, analytical validation, and a simple repetition-code intuition."
+version = "0.2.0"
+description = "Reference Python engine for the Quantum Noise Learning Lab. The user-facing app lives in web/ (Next.js); this package is the canonical numerical truth that the TypeScript port is gated against."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
@@ -16,7 +16,6 @@ keywords = [
     "density-matrix",
     "kraus-operators",
     "education",
-    "streamlit",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -38,19 +37,15 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-ui = [
-    "streamlit>=1.30,<2",
-    "plotly>=5.18,<7",
-    "matplotlib>=3.8,<4",
-]
 test = [
     "pytest>=7,<9",
 ]
-all = [
-    "streamlit>=1.30,<2",
-    "plotly>=5.18,<7",
+figures = [
     "matplotlib>=3.8,<4",
+]
+all = [
     "pytest>=7,<9",
+    "matplotlib>=3.8,<4",
 ]
 
 # Replace this URL with the real upstream URL of the repository before

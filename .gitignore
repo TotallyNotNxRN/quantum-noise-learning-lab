@@ -1,3 +1,4 @@
+# Python ----------------------------------------------------------------------
 __pycache__/
 *.pyc
 *.pyo
@@ -10,14 +11,34 @@ dist/
 .venv/
 venv/
 env/
+
+# Streamlit secrets (legacy app — directory removed in V2 pivot) -------------
 .streamlit/secrets.toml
+
+# Local config / agent state -------------------------------------------------
 .env
 .claude/settings.local.json
 .claude/
 .idea/
 .vscode/
 .DS_Store
+
+# Generated outputs ----------------------------------------------------------
 results/data/*.npz
 results/figures/*.png
 !results/figures/.gitkeep
 !results/data/.gitkeep
+
+# Node / Next.js (web/) ------------------------------------------------------
+node_modules/
+web/node_modules/
+web/.next/
+web/out/
+web/coverage/
+web/.vercel/
+web/.turbo/
+*.log
+.npm/
+
+# OS ------------------------------------------------------------------------
+Thumbs.db
