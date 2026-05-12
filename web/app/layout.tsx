@@ -46,7 +46,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
       </head>
       <body>
-        <MotionConfig reducedMotion="user">
+        {/* Force motion on for all users; the UI explicitly requires the
+            page transitions and 3D-tilt + animated background to be visible.
+            CSS `prefers-reduced-motion` rule still trims unbounded loops. */}
+        <MotionConfig reducedMotion="never">
           <ThemeProvider>
             <AnimatedBackground />
             <Navigation />

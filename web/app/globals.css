@@ -3,6 +3,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- Custom cursor (no trail; static dot + ring) ---------- */
+
+:root {
+  --qnl-cursor-dark: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><circle cx='14' cy='14' r='10' fill='none' stroke='rgba(122,162,255,0.55)' stroke-width='1.4'/><circle cx='14' cy='14' r='2.6' fill='%237aa2ff'/></svg>") 14 14, crosshair;
+  --qnl-cursor-light: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><circle cx='14' cy='14' r='10' fill='none' stroke='rgba(46,72,170,0.6)' stroke-width='1.4'/><circle cx='14' cy='14' r='2.6' fill='%232e48aa'/></svg>") 14 14, crosshair;
+}
+
 /* ---------- Theme tokens ---------- */
 
 :root {
@@ -14,9 +21,9 @@
 
   --bg: #050608;
   --bg-deep: #000000;
-  --panel: rgba(20, 26, 38, 0.55);
-  --panel-strong: rgba(20, 26, 38, 0.85);
-  --panel-border: rgba(122, 162, 255, 0.18);
+  --panel: rgba(28, 36, 56, 0.72);
+  --panel-strong: rgba(34, 44, 68, 0.92);
+  --panel-border: rgba(122, 162, 255, 0.28);
 
   --text: #e9ecf2;
   --text-dim: #98a0b3;
@@ -45,8 +52,9 @@
   --shadow-1: 0 10px 30px rgba(0, 0, 0, 0.45);
   --shadow-2: 0 22px 60px rgba(0, 0, 0, 0.55);
 
-  --bg-point: rgba(255, 255, 255, 0.10);
-  --bg-point-fade: rgba(255, 255, 255, 0.025);
+  --bg-point: rgba(180, 200, 255, 0.55);
+  --bg-point-fade: rgba(120, 160, 220, 0.08);
+  --qnl-cursor: var(--qnl-cursor-dark);
 }
 
 [data-theme="light"] {
@@ -85,8 +93,9 @@
   --shadow-1: 0 8px 20px rgba(15, 30, 80, 0.08);
   --shadow-2: 0 18px 45px rgba(15, 30, 80, 0.12);
 
-  --bg-point: rgba(15, 25, 55, 0.18);
-  --bg-point-fade: rgba(15, 25, 55, 0.04);
+  --bg-point: rgba(60, 90, 180, 0.55);
+  --bg-point-fade: rgba(60, 90, 180, 0.05);
+  --qnl-cursor: var(--qnl-cursor-light);
 }
 
 /* ---------- Base ---------- */
@@ -105,11 +114,19 @@ body {
     "Segoe UI", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  cursor: var(--qnl-cursor);
 }
 
 body {
   min-height: 100dvh;
   overflow-x: hidden;
+}
+
+a, button, [role="button"], input, [data-baseweb="slider"] [role="slider"] {
+  cursor: var(--qnl-cursor);
+}
+input[type="range"] {
+  cursor: ew-resize;
 }
 
 h1,
@@ -136,16 +153,20 @@ a {
   color: #fff;
 }
 
-/* ---------- Reduced motion ---------- */
+/* ---------- Reduced motion ----------
+ * Keep theme color/border transitions and the entrance opacity fade because
+ * they convey state changes. Only kill heavy motion (page slides, layout
+ * shifts, infinite loops). */
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+  .qnl-no-reduce-motion {
+    /* opt-out marker for elements that MUST keep their animation */
   }
 }
 
@@ -211,4 +232,21 @@ input[type="range"]::-moz-range-thumb {
 }
 .qnl-plot-host:hover {
   cursor: crosshair;
+}
+
+/* ---------- Glass-panel polish ---------- */
+
+[data-theme="dark"] .rounded-glass {
+  background-image: linear-gradient(
+    135deg,
+    rgba(122, 162, 255, 0.06) 0%,
+    rgba(20, 26, 38, 0) 60%
+  );
+}
+[data-theme="light"] .rounded-glass {
+  background-image: linear-gradient(
+    135deg,
+    rgba(46, 72, 170, 0.05) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
 }

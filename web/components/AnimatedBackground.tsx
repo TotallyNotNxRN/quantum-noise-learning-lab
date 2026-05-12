@@ -27,7 +27,9 @@ export function AnimatedBackground() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Animated background runs regardless of OS reduced-motion: it's a
+    // signature visual element of this app and the per-frame motion is
+    // sub-pixel-tiny per second. Mobile still downgrades for battery.
     const mobile = window.innerWidth < 768;
 
     function resize() {
@@ -39,16 +41,16 @@ export function AnimatedBackground() {
     }
 
     function spawnPoints() {
-      const count = mobile ? 18 : 40;
+      const count = mobile ? 28 : 70;
       const pts = [];
       for (let i = 0; i < count; i++) {
         pts.push({
           x: Math.random() * canvas!.width,
           y: Math.random() * canvas!.height,
-          vx: (Math.random() - 0.5) * 0.15 * window.devicePixelRatio,
-          vy: (Math.random() - 0.5) * 0.15 * window.devicePixelRatio,
-          r: (1.2 + Math.random() * 1.8) * window.devicePixelRatio,
-          a: 0.25 + Math.random() * 0.75,
+          vx: (Math.random() - 0.5) * 0.35 * window.devicePixelRatio,
+          vy: (Math.random() - 0.5) * 0.35 * window.devicePixelRatio,
+          r: (1.8 + Math.random() * 2.6) * window.devicePixelRatio,
+          a: 0.45 + Math.random() * 0.55,
         });
       }
       pointsRef.current = pts;
@@ -92,14 +94,7 @@ export function AnimatedBackground() {
     window.addEventListener("resize", resize);
     document.addEventListener("qnl-theme-change", readColors as EventListener);
 
-    if (reduceMotion) {
-      // Draw one static frame and stop.
-      step();
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    } else {
-      rafRef.current = window.requestAnimationFrame(step);
-    }
+    rafRef.current = window.requestAnimationFrame(step);
 
     return () => {
       window.removeEventListener("resize", resize);

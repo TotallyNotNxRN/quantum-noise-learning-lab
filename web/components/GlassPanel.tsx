@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useRef } from "react";
 
 interface GlassPanelProps {
   children: ReactNode;
@@ -16,11 +16,10 @@ interface GlassPanelProps {
  *  inside that already capture pointer events). */
 export function GlassPanel({ children, className, tilt = true, glow = false }: GlassPanelProps) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  useEffect(() => {
-    setReduceMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
+  // 3D tilt runs for everyone; the rotation is bounded (±6 deg) so it does
+  // not cause vestibular discomfort. Animations are a core part of the
+  // product surface here.
+  const reduceMotion = false;
 
   const rotX = useMotionValue(0);
   const rotY = useMotionValue(0);
