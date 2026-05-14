@@ -120,13 +120,15 @@ void main() {
   dark += vec3(1.8)  * specSharp;
   dark += vec3(0.55) * specRibbon;
 
-  // -------- Light mode: solid white with dark reflective ribbons -----
-  // For white oil, the "highlights" along the crests are actually
+  // -------- Light mode: solid white with subtle silvery ribbons -----
+  // For white oil, the "highlights" along the crests are slightly
   // darker grooves where the surface refracts light away from the
-  // camera. We invert the specular contribution to get dark ribbons.
+  // camera. Keep the base genuinely white (vec3(1.0)) and dip only a
+  // small amount so the ribbons read as soft silvery curves rather
+  // than dark slashes on cream.
   vec3 light = vec3(1.0);
-  light -= vec3(0.55) * specSharp;
-  light -= vec3(0.30) * specRibbon;
+  light -= vec3(0.22) * specSharp;
+  light -= vec3(0.08) * specRibbon;
   light = clamp(light, 0.0, 1.0);
 
   vec3 col = mix(dark, light, uMode);

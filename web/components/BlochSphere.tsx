@@ -123,16 +123,17 @@ function Scene({ rho, ghost }: { rho: Mat; ghost: Mat | null }) {
       <ambientLight intensity={0.65} />
       <directionalLight position={[3, 3, 4]} intensity={0.45} />
 
-      {/* Sphere shell — subtle inner fill so the back lines are dimmed
-          slightly behind it, giving real depth without blocking the
-          interior. Opacity 0.14 reads well against the now-opaque dark
-          backdrop. */}
+      {/* Sphere shell — subtle inner fill that gives depth without
+          obscuring the interior. Opacity is dropped sharply in light
+          mode because the shell colour there is dark on a cream
+          backdrop and otherwise prints a muddy grey wash through which
+          the wireframe lines look faint. */}
       <mesh>
         <sphereGeometry args={[1, 64, 48]} />
         <meshPhongMaterial
           color={new THREE.Color(palette.sphere)}
           transparent
-          opacity={0.14}
+          opacity={palette.isLight ? 0.04 : 0.14}
           depthWrite={false}
           shininess={28}
           side={THREE.FrontSide}
@@ -262,14 +263,17 @@ function readPalette() {
   const axis = readThemeToken("--bloch-axis") || "rgba(220,220,220,0.55)";
   const vector = readThemeToken("--bloch-vector") || "#ff9d4d";
   const label = readThemeToken("--text") || "#e9ecf2";
-  // For meshBasicMaterial.color we need solid hex (alpha set separately).
+  const isLight =
+    typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-theme") === "light";
   return {
     sphere: stripAlphaToHex(sphere) ?? "#7aa2ff",
     equator: stripAlpha(equator) ?? "#9ab0d8",
     axis: stripAlpha(axis) ?? "#c8c8c8",
     vector: stripAlpha(vector) ?? "#ff9d4d",
-    ghost: "#b0b8d0",
+    ghost: isLight ? "#5a6275" : "#b0b8d0",
     label: stripAlpha(label) ?? "#e9ecf2",
+    isLight,
   };
 }
 
