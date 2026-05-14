@@ -63,10 +63,10 @@
   --heatmap-neg: #f87171;
   --heatmap-mid: rgba(255, 255, 255, 0.04);
 
-  --bloch-sphere: rgba(255, 255, 255, 0.25);
-  --bloch-equator: rgba(255, 255, 255, 0.55);
+  --bloch-sphere: rgba(255, 255, 255, 0.55);
+  --bloch-equator: rgba(255, 255, 255, 0.92);
   --bloch-vector: #fbbf24;
-  --bloch-axis: rgba(255, 255, 255, 0.45);
+  --bloch-axis: rgba(255, 255, 255, 0.78);
 
   --bg-point: rgba(255, 255, 255, 0.45);
   --bg-point-fade: rgba(255, 255, 255, 0.0);
@@ -245,7 +245,19 @@ input[type="range"]::-moz-range-thumb {
 .qnl-plot-host {
   width: 100%;
   overflow: hidden;
-  cursor: crosshair;
+  cursor: none;
+}
+
+/* Equation block: prevent KaTeX-rendered .katex-display from forcing its
+ * own horizontal scrollbar on narrow viewports. We clamp the host font
+ * size instead; KaTeX scales with it. */
+.qnl-eq-fit .katex,
+.qnl-eq-fit .katex-display {
+  overflow: visible !important;
+  white-space: normal;
+}
+.qnl-eq-fit .katex-display {
+  margin: 0 !important;
 }
 
 /* ============================================================

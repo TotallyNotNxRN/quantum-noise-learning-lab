@@ -46,7 +46,13 @@ export function AnimatedCursor() {
     }
     function onOver(e: MouseEvent) {
       const t = e.target as HTMLElement | null;
-      const interactive = !!t?.closest('a, button, [role="button"], summary, label, input[type="range"]');
+      // Treat plot containers + canvases as interactive too, so the centre
+      // dot fades out and the ring + plus ticks show instead. Keeps the
+      // amber dot from punching through dense Plotly/recharts/heatmap fills.
+      const interactive = !!t?.closest(
+        'a, button, [role="button"], summary, label, input[type="range"], ' +
+        '.qnl-plot-host, canvas, svg',
+      );
       if (interactive !== hovering) {
         hovering = interactive;
         ring!.dataset.hover = hovering ? "1" : "0";

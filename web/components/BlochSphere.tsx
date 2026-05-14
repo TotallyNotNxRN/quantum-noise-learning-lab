@@ -25,7 +25,18 @@ interface BlochProps {
 
 export function BlochSphere({ rho, ghost = null, height = 380, caption }: BlochProps) {
   return (
-    <div className="qnl-plot-host overflow-hidden rounded-glass" style={{ height, background: "var(--plot-bg)" }}>
+    <div
+      className="qnl-plot-host overflow-hidden rounded-glass"
+      style={{
+        height,
+        // Opaque solid backdrop so the liquid-oil shader behind the canvas
+        // does not bleed through and wash out the wireframe lines. In dark
+        // mode the previous transparent canvas left the sphere virtually
+        // invisible against the bright shader highlights.
+        background:
+          "radial-gradient(circle at 50% 45%, rgba(20,22,30,0.92) 0%, rgba(5,6,9,0.98) 75%)",
+      }}
+    >
       <Canvas
         camera={{ position: [2.4, 1.6, 2.4], fov: 32, up: [0, 0, 1] }}
         dpr={[1, 2]}
@@ -79,32 +90,37 @@ function Scene({ rho, ghost }: { rho: Mat; ghost: Mat | null }) {
       <ambientLight intensity={0.65} />
       <directionalLight position={[3, 3, 4]} intensity={0.45} />
 
-      {/* Sphere shell — very translucent, gives depth without blocking interior. */}
+      {/* Sphere shell — subtle inner fill so the back lines are dimmed
+          slightly behind it, giving real depth without blocking the
+          interior. Opacity 0.14 reads well against the now-opaque dark
+          backdrop. */}
       <mesh>
         <sphereGeometry args={[1, 64, 48]} />
         <meshPhongMaterial
           color={new THREE.Color(palette.sphere)}
           transparent
-          opacity={0.07}
+          opacity={0.14}
           depthWrite={false}
-          shininess={20}
+          shininess={28}
           side={THREE.FrontSide}
         />
       </mesh>
 
-      {/* Three great circles + four latitude rings — wireframe scaffolding. */}
-      <Line points={equator} color={palette.equator} lineWidth={1.4} transparent opacity={0.85} />
-      <Line points={longitudeXZ} color={palette.equator} lineWidth={1.0} transparent opacity={0.55} />
-      <Line points={longitudeYZ} color={palette.equator} lineWidth={1.0} transparent opacity={0.55} />
-      <Line points={latitude30} color={palette.equator} lineWidth={0.8} transparent opacity={0.28} />
-      <Line points={latitudeNeg30} color={palette.equator} lineWidth={0.8} transparent opacity={0.28} />
-      <Line points={latitude60} color={palette.equator} lineWidth={0.8} transparent opacity={0.22} />
-      <Line points={latitudeNeg60} color={palette.equator} lineWidth={0.8} transparent opacity={0.22} />
+      {/* Three great circles + four latitude rings — wireframe scaffolding.
+         Line widths bumped up so the sphere reads at small sizes; opacity
+         left near-1 since the canvas backdrop is now opaque. */}
+      <Line points={equator} color={palette.equator} lineWidth={2.2} transparent opacity={1.0} />
+      <Line points={longitudeXZ} color={palette.equator} lineWidth={1.6} transparent opacity={0.85} />
+      <Line points={longitudeYZ} color={palette.equator} lineWidth={1.6} transparent opacity={0.85} />
+      <Line points={latitude30} color={palette.equator} lineWidth={1.0} transparent opacity={0.55} />
+      <Line points={latitudeNeg30} color={palette.equator} lineWidth={1.0} transparent opacity={0.55} />
+      <Line points={latitude60} color={palette.equator} lineWidth={0.9} transparent opacity={0.42} />
+      <Line points={latitudeNeg60} color={palette.equator} lineWidth={0.9} transparent opacity={0.42} />
 
       {/* Axis lines through origin. */}
-      <Line points={[[-1.15, 0, 0], [1.15, 0, 0]]} color={palette.axis} lineWidth={1.4} transparent opacity={0.65} />
-      <Line points={[[0, -1.15, 0], [0, 1.15, 0]]} color={palette.axis} lineWidth={1.4} transparent opacity={0.65} />
-      <Line points={[[0, 0, -1.15], [0, 0, 1.15]]} color={palette.axis} lineWidth={1.4} transparent opacity={0.65} />
+      <Line points={[[-1.15, 0, 0], [1.15, 0, 0]]} color={palette.axis} lineWidth={1.8} transparent opacity={0.85} />
+      <Line points={[[0, -1.15, 0], [0, 1.15, 0]]} color={palette.axis} lineWidth={1.8} transparent opacity={0.85} />
+      <Line points={[[0, 0, -1.15], [0, 0, 1.15]]} color={palette.axis} lineWidth={1.8} transparent opacity={0.85} />
 
       {/* Axis end-cap dots so the user can orient even from awkward angles. */}
       <PoleDot position={[0, 0, 1.0]} color={palette.label} />

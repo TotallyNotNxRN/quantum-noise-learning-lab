@@ -47,7 +47,10 @@ export function Equation({ latex, display = true, className, label }: EquationPr
         background: "color-mix(in srgb, var(--bg-deep) 50%, transparent)",
         border: "1px solid var(--panel-border)",
         boxShadow: "inset 0 1px 0 color-mix(in srgb, var(--text) 4%, transparent)",
-        overflowX: "auto",
+        // No horizontal scrollbar; long equations shrink to fit via the
+        // wrapper below. Multi-line LaTeX should be authored with `\\` so
+        // KaTeX line-wraps cleanly.
+        overflow: "hidden",
       }}
     >
       {label ? (
@@ -69,7 +72,13 @@ export function Equation({ latex, display = true, className, label }: EquationPr
         </div>
       ) : null}
       <div
-        style={{ fontSize: "1.1rem", lineHeight: 1.5, color: "var(--text)" }}
+        className="qnl-eq-fit"
+        style={{
+          fontSize: "clamp(0.85rem, 2.6vw, 1.1rem)",
+          lineHeight: 1.5,
+          color: "var(--text)",
+          textAlign: "center",
+        }}
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: html }}
       />
