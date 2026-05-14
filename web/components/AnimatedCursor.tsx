@@ -44,15 +44,18 @@ export function AnimatedCursor() {
         ring!.style.opacity = "0";
       }
     }
-    function onOver(e: MouseEvent) {
-      const t = e.target as HTMLElement | null;
-      // Treat plot containers + canvases as interactive too, so the centre
-      // dot fades out and the ring + plus ticks show instead. Keeps the
-      // amber dot from punching through dense Plotly/recharts/heatmap fills.
-      const interactive = !!t?.closest(
-        'a, button, [role="button"], summary, label, input[type="range"], ' +
-        '.qnl-plot-host, canvas, svg',
-      );
+    const INTERACTIVE_SELECTOR =
+      'a, button, [role="button"], summary, label, input[type="range"], ' +
+      '.qnl-plot-host, canvas, svg, .js-plotly-plot, .plotly';
+
+    function updateHover() {
+      // Probe the topmost element under the pointer every frame and
+      // recompute hover state. The previous mouseover-listener path
+      // missed cases where the pointer enters a chart by being created
+      // under it (resize / re-render), or when the chart is composed of
+      // many overlapping plotly SVG layers that swallow events.
+      const el = document.elementFromPoint(mx, my) as HTMLElement | null;
+      const interactive = !!el?.closest(INTERACTIVE_SELECTOR);
       if (interactive !== hovering) {
         hovering = interactive;
         ring!.dataset.hover = hovering ? "1" : "0";
@@ -65,6 +68,7 @@ export function AnimatedCursor() {
       const k = 0.22;
       rx += (mx - rx) * k;
       ry += (my - ry) * k;
+      updateHover();
       dot!.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%, -50%)`;
       const scale = hovering ? 1.5 : 1;
       ring!.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%) scale(${scale})`;
@@ -73,13 +77,11 @@ export function AnimatedCursor() {
 
     window.addEventListener("mousemove", onMove, { passive: true });
     window.addEventListener("mouseout", onLeave);
-    document.addEventListener("mouseover", onOver, { passive: true });
     rafRef.current = window.requestAnimationFrame(step);
 
     return () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseout", onLeave);
-      document.removeEventListener("mouseover", onOver);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);

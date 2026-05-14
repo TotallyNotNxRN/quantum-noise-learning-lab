@@ -54,20 +54,39 @@ export function BlochSphere({ rho, ghost = null, height = 380, caption }: BlochP
   );
 }
 
+// Snap the GL clear color based on the data-theme attribute itself rather
+// than the CSS variable. The variable is registered as <color> for smooth
+// transitions, so reading it during a swap returns an interpolating
+// intermediate value -- and after dark -> light -> dark we kept seeing a
+// stale near-black clear color while the wireframe lines were already
+// being drawn against the freshly white background. Snapping to a fixed
+// hex per attribute value sidesteps the timing entirely.
+const DARK_CLEAR = "#050609";
+const LIGHT_CLEAR = "#eeece6";
+
 function ClearColorSync() {
-  const { gl } = useThree();
+  const { gl, invalidate } = useThree();
   useEffect(() => {
     function refresh() {
-      const c =
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--bloch-canvas-outer")
-          .trim() || "#050609";
-      gl.setClearColor(c, 1);
+      const mode = document.documentElement.getAttribute("data-theme");
+      gl.setClearColor(mode === "light" ? LIGHT_CLEAR : DARK_CLEAR, 1);
+      invalidate();
     }
     refresh();
+    // The toggle fires the custom event after setting data-theme; we also
+    // observe attribute mutations so first paints + external code that
+    // sets data-theme directly stay in sync.
     document.addEventListener("qnl-theme-change", refresh);
-    return () => document.removeEventListener("qnl-theme-change", refresh);
-  }, [gl]);
+    const obs = new MutationObserver(refresh);
+    obs.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => {
+      document.removeEventListener("qnl-theme-change", refresh);
+      obs.disconnect();
+    };
+  }, [gl, invalidate]);
   return null;
 }
 

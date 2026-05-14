@@ -106,36 +106,32 @@ void main() {
   vec3 L = normalize(vec3(-0.55, 0.65, 0.7));
   vec3 V = vec3(0.0, 0.0, 1.0);
   vec3 H = normalize(L + V);
-  float diff = clamp(dot(N, L), 0.0, 1.0);
 
-  // -------- Dark mode: oil-black plus very sharp white ribbons --------
-  // Multi-tier specular: a wide sheen on the slopes, plus a piercing
-  // pinhead specular on the crests. Combined they read as wet glossy
-  // oil with bright reflective highlights -- not matte latex.
-  float specSharp = pow(clamp(dot(N, H), 0.0, 1.0), 220.0);   // pinhead
-  float specWide  = pow(clamp(dot(N, H), 0.0, 1.0), 28.0);    // sheen
-  float specHalo  = pow(clamp(dot(N, H), 0.0, 1.0), 8.0);     // soft glow
+  // ----- Specular only — no diffuse sheen. Yields uniform solid base
+  //       (pure black / pure white) with narrow bright reflective
+  //       ribbons along the wave crests. This is the "glossy oil"
+  //       look the user wants — no mid-tone latex shading. -----
+  float ndoth = clamp(dot(N, H), 0.0, 1.0);
+  float specSharp = pow(ndoth, 260.0);     // piercing white pinhead
+  float specRibbon = pow(ndoth, 60.0);     // narrow ribbon along the crest
 
-  vec3 dark = vec3(0.0035);
-  // Deepen the valleys so the highs pop harder.
-  dark += vec3(0.02) * pow(smoothstep(-1.0, 1.0, h), 1.6);
-  dark += vec3(0.06) * pow(diff, 2.4);
-  dark += vec3(1.6)  * specSharp;   // very bright thin ribbon
-  dark += vec3(0.45) * specWide;    // sheen on slopes
-  dark += vec3(0.10) * specHalo;    // glow under the highlights
+  // -------- Dark mode: solid black with bright reflective ribbons ----
+  vec3 dark = vec3(0.0);
+  dark += vec3(1.8)  * specSharp;
+  dark += vec3(0.55) * specRibbon;
 
-  // -------- Light mode: cream oil with deep amber-shadow valleys ------
-  vec3 light = vec3(0.97);
-  light -= vec3(0.22) * pow(smoothstep(-1.0, 1.0, h), 1.4);
-  light -= vec3(0.28) * (1.0 - pow(diff, 1.5));
-  light += vec3(0.04) * specSharp;
+  // -------- Light mode: solid white with dark reflective ribbons -----
+  // For white oil, the "highlights" along the crests are actually
+  // darker grooves where the surface refracts light away from the
+  // camera. We invert the specular contribution to get dark ribbons.
+  vec3 light = vec3(1.0);
+  light -= vec3(0.55) * specSharp;
+  light -= vec3(0.30) * specRibbon;
   light = clamp(light, 0.0, 1.0);
 
   vec3 col = mix(dark, light, uMode);
 
-  // Soft vignette so the edges roll into shadow / fade.
-  float vig = 1.0 - smoothstep(0.5, 1.35, length(uv * vec2(0.85, 1.0)));
-  col *= mix(0.4 + 0.6 * vig, 0.88 + 0.12 * vig, uMode);
+  // No vignette — uniform solid base across the viewport, as requested.
 
   gl_FragColor = vec4(col, 1.0);
 }

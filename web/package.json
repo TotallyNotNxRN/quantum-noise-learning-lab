@@ -20,6 +20,8 @@
     "@react-three/drei": "10.7.7",
     "three": "0.175.0",
     "recharts": "3.8.1",
+    "react-plotly.js": "2.6.0",
+    "plotly.js-basic-dist": "3.5.1",
     "katex": "0.16.11",
     "clsx": "2.1.1"
   },
