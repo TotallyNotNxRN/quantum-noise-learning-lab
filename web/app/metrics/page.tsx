@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 
 import { BeginnerBox, TechnicalBox, ValidationPill } from "@/components/Callouts";
 import { EigenvalueBar, MetricCurve } from "@/components/Charts";
@@ -30,10 +30,18 @@ const CHANNEL: Record<Channel, { label: string; symbol: string; fn: typeof ampli
 export default function MetricsPage() {
   const [channel, setChannel] = useState<Channel>("amplitude");
   const [param, setParam] = useState(0.4);
+  // Slider perf: the recharts MetricCurves re-layout on every prop change
+  // (including the vline `param`). Deferring `param` for the curves means
+  // the heavy chart re-render runs at idle priority while the Bloch +
+  // density-matrix heatmap stay real-time on the slider's `param`.
+  const paramForCurves = useDeferredValue(param);
   const grid = useMemo(() => linspace(0, 1, 51), []);
   const rho0 = useMemo(() => densityMatrix(plusState()), []);
   const ref = useMemo(() => plusState(), []);
-  const fidCurve = useMemo(() => sweepMetric(CHANNEL[channel].fn, rho0, ref, fidelity, grid), [channel, grid, rho0, ref]);
+  const fidCurve = useMemo(
+    () => sweepMetric(CHANNEL[channel].fn, rho0, ref, fidelity, grid),
+    [channel, grid, rho0, ref],
+  );
   const purCurve = useMemo(
     () => sweepMetric(CHANNEL[channel].fn, rho0, ref, (rho) => purity(rho), grid),
     [channel, grid, rho0, ref],
@@ -140,7 +148,7 @@ export default function MetricsPage() {
             xLabel={CHANNEL[channel].symbol}
             yLabel="F"
             yDomain={[0, 1]}
-            vline={param}
+            vline={paramForCurves}
             series={[{ name: "F", values: grid.map((x, i) => ({ x, y: fidCurve[i] })), color: "primary" }]}
           />
         </GlassPanel>
@@ -150,7 +158,7 @@ export default function MetricsPage() {
             xLabel={CHANNEL[channel].symbol}
             yLabel="Tr(ρ²)"
             yDomain={[0.4, 1.05]}
-            vline={param}
+            vline={paramForCurves}
             series={[{ name: "Purity", values: grid.map((x, i) => ({ x, y: purCurve[i] })), color: "secondary" }]}
           />
         </GlassPanel>

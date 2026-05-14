@@ -4,9 +4,10 @@ import { MotionConfig } from "framer-motion";
 import { type Metadata } from "next";
 import { Inter, JetBrains_Mono, Newsreader } from "next/font/google";
 
-import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { AnimatedCursor } from "@/components/AnimatedCursor";
+import { LiquidBackground } from "@/components/LiquidBackground";
 import { Navigation } from "@/components/Navigation";
+import { OpeningAnimation } from "@/components/OpeningAnimation";
 import { PageTransition } from "@/components/PageTransition";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
@@ -59,8 +60,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <MotionConfig reducedMotion="never">
           <ThemeProvider>
-            <AnimatedBackground />
+            <LiquidBackground />
             <AnimatedCursor />
+            <OpeningAnimation />
             <Navigation />
             <PageTransition>{children}</PageTransition>
           </ThemeProvider>

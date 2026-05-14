@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 
 import { BeginnerBox, ConventionCallout, TechnicalBox, ValidationPill } from "@/components/Callouts";
 import { DensityMatrixHeatmap } from "@/components/DensityMatrixHeatmap";
-import { Equation } from "@/components/Equation";
+import { Equation, SymbolLegend } from "@/components/Equation";
 import { GlassPanel } from "@/components/GlassPanel";
 
 import { type Mat } from "@/lib/matrix";
@@ -182,9 +182,26 @@ export default function NoisePage() {
             only a probabilistic mixture of outcomes that we accumulate into ρ.
           </BeginnerBox>
           <TechnicalBox>
-            All three channels are completely positive trace preserving
-            (CPTP). The residual <code className="mono">||Σ Kᵢ†Kᵢ − I||_F</code>{" "}
-            stays below 1e-10 for every parameter value — verified live above.
+            <p>
+              All three channels are <em>completely positive trace preserving</em>
+              {" "}(CPTP). That CPTP property is equivalent to the Kraus operators
+              summing to the identity:
+            </p>
+            <Equation latex="\sum_i E_i^{\dagger} E_i \;=\; I" label="Kraus completeness" />
+            <p>
+              The live numerical residual below stays under{" "}
+              <Equation latex="10^{-10}" display={false} /> for every parameter — i.e.
+              the channel never invents or destroys probability:
+            </p>
+            <Equation latex="\bigl\Vert\, \sum_i E_i^{\dagger} E_i \;-\; I \,\bigr\Vert_{F} \;<\; 10^{-10}" />
+            <SymbolLegend
+              items={[
+                { symbol: "E_i", meaning: "Kraus operator i — captures one possible noise outcome." },
+                { symbol: "E_i^{\\dagger}", meaning: "conjugate transpose of E_i (its quantum-mechanical adjoint)." },
+                { symbol: "\\sum_i E_i^{\\dagger} E_i", meaning: "sum over every possible outcome — by CPTP this must equal the identity." },
+                { symbol: "\\Vert M \\Vert_{F}", meaning: "Frobenius norm of M — square-root of the sum of |entry|²." },
+              ]}
+            />
           </TechnicalBox>
         </GlassPanel>
 

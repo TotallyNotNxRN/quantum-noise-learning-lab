@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 
 import { BeginnerBox, ConventionCallout, TechnicalBox } from "@/components/Callouts";
 import { MetricCurve } from "@/components/Charts";
@@ -13,6 +13,7 @@ import { linspace } from "@/lib/sweeps";
 
 export default function ProtectionPage() {
   const [p, setP] = useState(0.2);
+  const pForCurve = useDeferredValue(p);
   const grid = useMemo(() => linspace(0, 1, 101), []);
   const unprot = useMemo(() => grid.map((x) => repetitionSuccessUnprotected(x)), [grid]);
   const prot = useMemo(() => grid.map((x) => repetitionSuccessProtected(x)), [grid]);
@@ -85,7 +86,7 @@ export default function ProtectionPage() {
               title="Success probability vs bit-flip rate"
               xLabel="p"
               yLabel="P(success)"
-              vline={p}
+              vline={pForCurve}
               yDomain={[0, 1.05]}
               series={[
                 { name: "Unprotected (1 − p)", values: grid.map((x, i) => ({ x, y: unprot[i] })), color: "primary" },

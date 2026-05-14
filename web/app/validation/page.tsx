@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 
 import { BeginnerBox, ConventionCallout, TechnicalBox } from "@/components/Callouts";
 import { MetricCurve } from "@/components/Charts";
@@ -31,6 +31,9 @@ type Channel = "amplitude" | "phase";
 export default function ValidationPage() {
   const [channel, setChannel] = useState<Channel>("amplitude");
   const [param, setParam] = useState(0.5);
+  // Defer the slider value for the chart vline so recharts doesn't
+  // re-layout on every slider tick.
+  const paramForCurves = useDeferredValue(param);
 
   const grid = useMemo(() => linspace(0, 1, 51), []);
   const rho0 = useMemo(() => densityMatrix(plusState()), []);
@@ -160,7 +163,7 @@ export default function ValidationPage() {
               title="Fidelity overlay"
               xLabel={sym}
               yLabel="F"
-              vline={param}
+              vline={paramForCurves}
               yDomain={[0, 1.02]}
               series={[
                 { name: "Simulated", values: grid.map((x, i) => ({ x, y: fidSim[i] })), color: "primary" },

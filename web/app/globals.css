@@ -249,14 +249,46 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* ============================================================
- * Glass panel substrate
+ * Glass panel
+ *
+ * Frosted glass that thickens + glows amber on hover. Hover is
+ * pure CSS so it does not allocate or re-render any React tree.
  * ============================================================ */
 
-.rounded-glass {
+.qnl-glass {
   position: relative;
   isolation: isolate;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow:
+    var(--shadow-1),
+    inset 0 1px 0 color-mix(in srgb, var(--text) 6%, transparent);
+  transition:
+    backdrop-filter 320ms cubic-bezier(.2, .8, .2, 1),
+    -webkit-backdrop-filter 320ms cubic-bezier(.2, .8, .2, 1),
+    border-color 320ms ease,
+    box-shadow 320ms ease,
+    background 320ms ease;
 }
-.rounded-glass::before {
+
+/* Frost-and-glow on hover. */
+.qnl-glass:hover {
+  background: var(--panel-strong);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--panel-border));
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.55),
+    0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent),
+    0 0 36px color-mix(in srgb, var(--accent) 22%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text) 10%, transparent);
+}
+
+/* Subtle interior tint so the blur has something to refract. */
+.qnl-glass::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -264,13 +296,22 @@ input[type="range"]::-moz-range-thumb {
   pointer-events: none;
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--accent) 8%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 6%, transparent) 0%,
     transparent 55%
   );
-  opacity: 0.55;
+  opacity: 0.6;
   z-index: 0;
+  transition: opacity 320ms ease;
 }
-.rounded-glass > * {
+.qnl-glass:hover::before {
+  opacity: 1;
+}
+.qnl-glass > * {
   position: relative;
   z-index: 1;
+}
+
+/* Back-compat: any older `rounded-glass` users get the same treatment. */
+.rounded-glass {
+  border-radius: 16px;
 }
