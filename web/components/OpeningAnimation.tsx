@@ -3,6 +3,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
+function readVar(name: string, fallback: string): string {
+  if (typeof window === "undefined") return fallback;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}
+
 /** Three-phase intro played once per browser session (sessionStorage gate):
  *   1. Liquid pour: a black panel slides down from the top, fills the
  *      viewport in ~600 ms.
@@ -13,6 +19,12 @@ import { useEffect, useState } from "react";
  *  Total: ~1.8 s. Skippable by clicking anywhere. */
 export function OpeningAnimation() {
   const [active, setActive] = useState<boolean | null>(null);
+  const [colors, setColors] = useState({
+    pour: "#000000",
+    text: "#f5f5f4",
+    textDim: "#a8a29e",
+    accent: "#fbbf24",
+  });
 
   useEffect(() => {
     try {
@@ -23,6 +35,12 @@ export function OpeningAnimation() {
       }
       setActive(true);
       sessionStorage.setItem("qnl-intro-played", "1");
+      setColors({
+        pour: readVar("--intro-pour", "#000000"),
+        text: readVar("--intro-text", "#f5f5f4"),
+        textDim: readVar("--intro-text-dim", "#a8a29e"),
+        accent: readVar("--accent", "#fbbf24"),
+      });
     } catch {
       setActive(true);
     }
@@ -49,16 +67,13 @@ export function OpeningAnimation() {
         aria-hidden
         className="fixed inset-0 z-[200] cursor-pointer overflow-hidden"
       >
-        {/* PHASE 1 — liquid pour: a black wall slides down from above. */}
+        {/* PHASE 1 — liquid pour. Color follows the active theme. */}
         <motion.div
           initial={{ y: "-100%" }}
           animate={{ y: ["-100%", "0%", "0%", "100%"] }}
           transition={{ duration: 1.8, times: [0, 0.32, 0.78, 1.0], ease }}
           className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, #000 0%, #050505 60%, #0a0a0a 100%)",
-          }}
+          style={{ background: colors.pour }}
         />
         {/* Surface tension highlight at the leading edge of the pour. */}
         <motion.div
@@ -68,8 +83,8 @@ export function OpeningAnimation() {
           className="absolute inset-x-0 h-[6px]"
           style={{
             top: 0,
-            background:
-              "linear-gradient(180deg, transparent 0%, rgba(251,191,36,0.55) 60%, rgba(251,191,36,0) 100%)",
+            background: `linear-gradient(180deg, transparent 0%, ${colors.accent} 60%, transparent 100%)`,
+            opacity: 0.7,
             filter: "blur(2px)",
           }}
         />
@@ -81,7 +96,7 @@ export function OpeningAnimation() {
           transition={{ duration: 1.8, times: [0, 0.35, 0.55, 0.78, 1.0], ease }}
           className="absolute inset-0 flex items-center justify-center"
         >
-          <BlochAssemble />
+          <BlochAssemble stroke={colors.text} accent={colors.accent} />
         </motion.div>
 
         {/* Wordmark fades in alongside the sphere. */}
@@ -93,13 +108,13 @@ export function OpeningAnimation() {
         >
           <span
             className="font-serif text-2xl tracking-tight md:text-3xl"
-            style={{ color: "#f5f5f4" }}
+            style={{ color: colors.text }}
           >
             Quantum Noise Lab
           </span>
           <span
             className="text-[10px] uppercase tracking-[0.22em]"
-            style={{ color: "#a8a29e" }}
+            style={{ color: colors.textDim }}
           >
             single-qubit · decoherence
           </span>
@@ -109,9 +124,7 @@ export function OpeningAnimation() {
   );
 }
 
-function BlochAssemble() {
-  const stroke = "#f5f5f4";
-  const accent = "#fbbf24";
+function BlochAssemble({ stroke, accent }: { stroke: string; accent: string }) {
   const draw = {
     initial: { pathLength: 0, opacity: 0 },
     animate: { pathLength: 1, opacity: 1 },

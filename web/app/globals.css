@@ -45,6 +45,14 @@
   --panel-strong: rgba(255, 255, 255, 0.075);
   --panel-border: rgba(255, 255, 255, 0.10);
 
+  /* Bloch canvas backdrop — opaque so the liquid shader behind cannot
+   * bleed through and wash out the wireframe. */
+  --bloch-canvas-inner: rgba(20, 22, 30, 0.94);
+  --bloch-canvas-outer: rgba(5, 6, 9, 0.98);
+  --intro-pour: #000000;
+  --intro-text: #f5f5f4;
+  --intro-text-dim: #a8a29e;
+
   --text: #f5f5f4;
   --text-dim: #a8a29e;
   --text-accent: #fbbf24;
@@ -102,16 +110,24 @@
   --heatmap-neg: #b91c1c;
   --heatmap-mid: rgba(255, 255, 255, 0.6);
 
-  --bloch-sphere: rgba(28, 25, 23, 0.20);
-  --bloch-equator: rgba(28, 25, 23, 0.55);
+  --bloch-sphere: rgba(28, 25, 23, 0.45);
+  --bloch-equator: rgba(28, 25, 23, 0.88);
   --bloch-vector: #b45309;
-  --bloch-axis: rgba(28, 25, 23, 0.45);
+  --bloch-axis: rgba(28, 25, 23, 0.78);
 
   --bg-point: rgba(28, 25, 23, 0.40);
   --bg-point-fade: rgba(28, 25, 23, 0.0);
 
   --shadow-1: 0 8px 20px rgba(15, 23, 42, 0.08);
   --shadow-2: 0 18px 45px rgba(15, 23, 42, 0.12);
+
+  /* Bloch canvas backdrop — opaque cream so the liquid shader cannot
+   * bleed through and wash out the dark wireframe. */
+  --bloch-canvas-inner: rgba(255, 255, 255, 0.96);
+  --bloch-canvas-outer: rgba(238, 236, 230, 0.98);
+  --intro-pour: #f5f5f4;
+  --intro-text: #1c1917;
+  --intro-text-dim: #57534e;
 }
 
 /* Animate every theme-driven surface 400 ms when the data-theme attribute
@@ -248,6 +264,16 @@ input[type="range"]::-moz-range-thumb {
   cursor: none;
 }
 
+/* Bloch sphere canvas — theme-aware opaque backdrop so the liquid-oil
+ * shader behind the page never washes out the wireframe lines. */
+.qnl-bloch-host {
+  background: radial-gradient(
+    circle at 50% 45%,
+    var(--bloch-canvas-inner) 0%,
+    var(--bloch-canvas-outer) 75%
+  );
+}
+
 /* Equation block: prevent KaTeX-rendered .katex-display from forcing its
  * own horizontal scrollbar on narrow viewports. We clamp the host font
  * size instead; KaTeX scales with it. */
@@ -293,7 +319,7 @@ input[type="range"]::-moz-range-thumb {
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   box-shadow:
-    0 18px 50px rgba(0, 0, 0, 0.55),
+    var(--shadow-2),
     0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent),
     0 0 36px color-mix(in srgb, var(--accent) 22%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--text) 10%, transparent);

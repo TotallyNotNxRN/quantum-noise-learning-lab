@@ -26,15 +26,11 @@ interface BlochProps {
 export function BlochSphere({ rho, ghost = null, height = 380, caption }: BlochProps) {
   return (
     <div
-      className="qnl-plot-host overflow-hidden rounded-glass"
+      className="qnl-plot-host qnl-bloch-host overflow-hidden rounded-glass"
       style={{
         height,
-        // Opaque solid backdrop so the liquid-oil shader behind the canvas
-        // does not bleed through and wash out the wireframe lines. In dark
-        // mode the previous transparent canvas left the sphere virtually
-        // invisible against the bright shader highlights.
-        background:
-          "radial-gradient(circle at 50% 45%, rgba(20,22,30,0.92) 0%, rgba(5,6,9,0.98) 75%)",
+        // Theme-aware opaque backdrop (see globals.css for the radial
+        // gradient using --bloch-canvas-inner / --bloch-canvas-outer).
       }}
     >
       <Canvas
