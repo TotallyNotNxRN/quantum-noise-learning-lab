@@ -1,7 +1,7 @@
 "use client";
 
 import { Billboard, Line, OrbitControls, Text } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useState } from "react";
 import * as THREE from "three";
 
@@ -36,8 +36,9 @@ export function BlochSphere({ rho, ghost = null, height = 380, caption }: BlochP
       <Canvas
         camera={{ position: [2.4, 1.6, 2.4], fov: 32, up: [0, 0, 1] }}
         dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: true, alpha: false }}
       >
+        <ClearColorSync />
         <Scene rho={rho} ghost={ghost} />
         <OrbitControls
           enablePan={false}
@@ -51,6 +52,23 @@ export function BlochSphere({ rho, ghost = null, height = 380, caption }: BlochP
       {caption ? <p className="px-4 py-2 text-xs text-ink-dim">{caption}</p> : null}
     </div>
   );
+}
+
+function ClearColorSync() {
+  const { gl } = useThree();
+  useEffect(() => {
+    function refresh() {
+      const c =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--bloch-canvas-outer")
+          .trim() || "#050609";
+      gl.setClearColor(c, 1);
+    }
+    refresh();
+    document.addEventListener("qnl-theme-change", refresh);
+    return () => document.removeEventListener("qnl-theme-change", refresh);
+  }, [gl]);
+  return null;
 }
 
 function Scene({ rho, ghost }: { rho: Mat; ghost: Mat | null }) {
@@ -186,9 +204,10 @@ function AxisLabel({ position, text, color, size }: { position: [number, number,
         color={color}
         anchorX="center"
         anchorY="middle"
-        outlineWidth={0.012}
-        outlineColor="rgba(0,0,0,0.45)"
-        outlineOpacity={0.65}
+        // Thin contrast outline; previous 0.012 was reading as bold.
+        outlineWidth={0.004}
+        outlineColor="rgba(0,0,0,0.55)"
+        outlineOpacity={0.45}
       >
         {text}
       </Text>

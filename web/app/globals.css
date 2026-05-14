@@ -45,10 +45,10 @@
   --panel-strong: rgba(255, 255, 255, 0.075);
   --panel-border: rgba(255, 255, 255, 0.10);
 
-  /* Bloch canvas backdrop — opaque so the liquid shader behind cannot
-   * bleed through and wash out the wireframe. */
-  --bloch-canvas-inner: rgba(20, 22, 30, 0.94);
-  --bloch-canvas-outer: rgba(5, 6, 9, 0.98);
+  /* Bloch canvas backdrop — FULLY opaque so the liquid shader behind
+   * cannot bleed through at the edges of the radial gradient. */
+  --bloch-canvas-inner: #14161f;
+  --bloch-canvas-outer: #050609;
   --intro-pour: #000000;
   --intro-text: #f5f5f4;
   --intro-text-dim: #a8a29e;
@@ -121,10 +121,10 @@
   --shadow-1: 0 8px 20px rgba(15, 23, 42, 0.08);
   --shadow-2: 0 18px 45px rgba(15, 23, 42, 0.12);
 
-  /* Bloch canvas backdrop — opaque cream so the liquid shader cannot
-   * bleed through and wash out the dark wireframe. */
-  --bloch-canvas-inner: rgba(255, 255, 255, 0.96);
-  --bloch-canvas-outer: rgba(238, 236, 230, 0.98);
+  /* Bloch canvas backdrop — FULLY opaque cream so the liquid shader
+   * cannot bleed through at the edges of the radial gradient. */
+  --bloch-canvas-inner: #ffffff;
+  --bloch-canvas-outer: #eeece6;
   --intro-pour: #f5f5f4;
   --intro-text: #1c1917;
   --intro-text-dim: #57534e;
@@ -272,6 +272,21 @@ input[type="range"]::-moz-range-thumb {
     var(--bloch-canvas-inner) 0%,
     var(--bloch-canvas-outer) 75%
   );
+}
+
+/* Animated cursor: hover state hides the centre dot and fades in the
+ * four plus tick marks. (The ring's scale-on-hover is applied directly
+ * by JS in the requestAnimationFrame loop because the ring's transform
+ * is also driven by JS for the spring-lerp follow.) */
+.qnl-cursor-dot[data-hover="1"] {
+  opacity: 0 !important;
+}
+.qnl-cursor-tick {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.qnl-cursor-ring[data-hover="1"] .qnl-cursor-tick {
+  opacity: 1;
 }
 
 /* Equation block: prevent KaTeX-rendered .katex-display from forcing its

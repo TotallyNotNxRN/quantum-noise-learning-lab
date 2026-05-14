@@ -66,7 +66,8 @@ export function AnimatedCursor() {
       rx += (mx - rx) * k;
       ry += (my - ry) * k;
       dot!.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%, -50%)`;
-      ring!.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
+      const scale = hovering ? 1.5 : 1;
+      ring!.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%) scale(${scale})`;
       rafRef.current = window.requestAnimationFrame(step);
     }
 
@@ -141,26 +142,6 @@ export function AnimatedCursor() {
         <Tick orientation="e" />
         <Tick orientation="w" />
       </div>
-      <style jsx global>{`
-        .qnl-cursor-dot[data-hover="1"] {
-          opacity: 0 !important;
-        }
-        .qnl-cursor-ring[data-hover="1"] {
-          transform: translate3d(var(--x, 0), var(--y, 0), 0) translate(-50%, -50%) scale(1.5);
-        }
-        .qnl-cursor-tick {
-          position: absolute;
-          background: var(--accent);
-          opacity: 0;
-          transition: opacity 200ms ease;
-          width: 2px;
-          height: 6px;
-          border-radius: 1px;
-        }
-        .qnl-cursor-ring[data-hover="1"] .qnl-cursor-tick {
-          opacity: 1;
-        }
-      `}</style>
     </>
   );
 }

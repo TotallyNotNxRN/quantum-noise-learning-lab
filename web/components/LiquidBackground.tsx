@@ -107,23 +107,28 @@ void main() {
   vec3 V = vec3(0.0, 0.0, 1.0);
   vec3 H = normalize(L + V);
   float diff = clamp(dot(N, L), 0.0, 1.0);
-  // Sharp specular highlight = the bright ribbon along the crest.
-  float spec = pow(clamp(dot(N, H), 0.0, 1.0), 110.0);
 
-  // -------- Dark mode: polished black oil + bright white ribbons ------
-  vec3 dark = vec3(0.008);
-  dark += vec3(0.025) * smoothstep(-1.0, 1.0, h);
-  dark += vec3(0.10)  * pow(diff, 1.8);
-  dark += vec3(1.0)   * spec;
-  // Add a softer secondary specular for the wider sheen on the slopes.
-  float soft = pow(clamp(dot(N, H), 0.0, 1.0), 18.0);
-  dark += vec3(0.18) * soft;
+  // -------- Dark mode: oil-black plus very sharp white ribbons --------
+  // Multi-tier specular: a wide sheen on the slopes, plus a piercing
+  // pinhead specular on the crests. Combined they read as wet glossy
+  // oil with bright reflective highlights -- not matte latex.
+  float specSharp = pow(clamp(dot(N, H), 0.0, 1.0), 220.0);   // pinhead
+  float specWide  = pow(clamp(dot(N, H), 0.0, 1.0), 28.0);    // sheen
+  float specHalo  = pow(clamp(dot(N, H), 0.0, 1.0), 8.0);     // soft glow
 
-  // -------- Light mode: cream oil + softer dark ridges ----------------
-  vec3 light = vec3(0.96);
-  light -= vec3(0.18) * smoothstep(-1.0, 1.0, h);
-  light -= vec3(0.22) * (1.0 - pow(diff, 1.6));
-  light += vec3(0.04) * spec;
+  vec3 dark = vec3(0.0035);
+  // Deepen the valleys so the highs pop harder.
+  dark += vec3(0.02) * pow(smoothstep(-1.0, 1.0, h), 1.6);
+  dark += vec3(0.06) * pow(diff, 2.4);
+  dark += vec3(1.6)  * specSharp;   // very bright thin ribbon
+  dark += vec3(0.45) * specWide;    // sheen on slopes
+  dark += vec3(0.10) * specHalo;    // glow under the highlights
+
+  // -------- Light mode: cream oil with deep amber-shadow valleys ------
+  vec3 light = vec3(0.97);
+  light -= vec3(0.22) * pow(smoothstep(-1.0, 1.0, h), 1.4);
+  light -= vec3(0.28) * (1.0 - pow(diff, 1.5));
+  light += vec3(0.04) * specSharp;
   light = clamp(light, 0.0, 1.0);
 
   vec3 col = mix(dark, light, uMode);
